@@ -22,7 +22,7 @@ function analyze(build, stage) {
   }
 
   function run(cb) {
-    stage.command('plato', PLATO_ARGS).once('exit', cb);
+    stage.command('plato', PLATO_ARGS).once('close', cb);
   }
 
   function collect(cb) {
@@ -30,6 +30,7 @@ function analyze(build, stage) {
   }
 
   function done(err) {
+    console.log('PLATO DONE', arguments);
     if (err) stage.emit('error', err);
     else stage.end();
   }

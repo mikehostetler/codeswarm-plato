@@ -1,9 +1,9 @@
+var collect = require('./collect');
+
 var PLATO_ARGS = [
   '-q',
   '-r',
-  '-x', 'node_modules|\\.json',
-  '-d', './.plato',
-  '.'];
+  '-x', 'node_modules|\\.json'];
 
 
 /// analyze
@@ -11,75 +11,38 @@ var PLATO_ARGS = [
 exports.analyze = analyze;
 
 function analyze(build, stage) {
+  var platoDir = '/tmp/plato-' + build.dir;
+
   async.series([
+    mkdirp,
     inject,
     run,
-    collect
+    _collect
     ], done);
+
+  function mkdirp(cb) {
+    stage.command('mkdir', ['-p', platoDir]).once('close', cb);
+  }
 
   function inject(cb) {
     process.nextTick(cb);
   }
 
   function run(cb) {
-    stage.command('plato', PLATO_ARGS).once('close', cb);
+    var args = PLATO_ARGS.concat(['-d', platoDir, '.']);
+    stage.command('plato', args).once('close', cb);
   }
 
-  function collect(cb) {
-    process.nextTick(cb);
+  function _collect(cb) {
+    collect(platoDir, stage, collected);
+
+    function collected(platoOutput) {
+      cb();
+    }
   }
 
   function done(err) {
-    console.log('PLATO DONE', arguments);
     if (err) stage.emit('error', err);
     else stage.end();
   }
 }
-
-// function init(config, job, context, cb) {
-
-//   if (! config) config = {};
-
-//   var plugin = {};
-
-//   plugin.path = __dirname + '/node_modules/.bin';
-
-
-//   /// prepare
-
-//   plugin.prepare = prepare;
-//   function prepare(context, done) {
-//     inject(context, done);
-//   }
-
-
-//   /// test
-
-//   plugin.test = test;
-
-//   function test(ctx, cb) {
-
-//     var id = ctx.job._id;
-//     var platoOutDir = '/tmp/plato-' + id;
-//     var cmd = 'plato';
-//     var args = PLATO_ARGS.concat(['-d', platoOutDir, '.']);
-
-//     var opts = {
-//       cwd: ctx.dataDir,
-//       cmd: {
-//         command: cmd,
-//         args: args,
-//         screen: 'Generating plato stats...'
-//       }
-//     };
-//     ctx.cmd(opts, done);
-
-//     function done(code, stdout, stderr) {
-//       if (code == 0) {
-//         collect(platoOutDir, ctx, cb);
-//       } else cb(code, stdout, stderr);
-//     }
-//   }
-
-//   cb(null, plugin);
-// }

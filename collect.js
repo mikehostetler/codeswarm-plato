@@ -1,10 +1,7 @@
 module.exports = collect;
 
-function collect(platoOutDir, ctx, cb) {
+function collect(platoOutDir, stage, cb) {
 
-  ctx.comment('Collecting plato reports');
-
-  var cmd = 'find';
   var args = [
     '.',
     '-type', 'f',  // file type
@@ -13,34 +10,20 @@ function collect(platoOutDir, ctx, cb) {
     '-exec', 'cat', '{}', '\;'
     ];
 
-  var opts = {
-    cwd: platoOutDir,
-    cmd: {
-      command: cmd,
-      args: args,
-      screen: 'Collecting plato reports...'
-    }
+  var child = stage.command('find', args, { cwd: platoOutDir, silent: true });
+  child.stdout.setEncoding('utf-8');
+  child.stdout.on('data', onChildData);
+  child.once('close', onChildExit);
+
+  var out = '';
+  function onChildData(d) {
+    out += d;
   }
-  ctx.cmd(opts, collected);
 
-  function collected(code, stdout, stderr) {
-    if (code != 0) return cb(new Error(stderr));
-
-    ctx.comment('Collected plato reports');
-
-    var reports;
-    try {
-      reports = parsePlatoOutput(stdout);
-    } catch(err) {
-      err.message = 'Error parsing plato output: ' + err.message;
-      return cb(err);
-    }
-
-    ctx.comment('Parsed plato reports');
-
-    ctx.data({reports: reports});
-
-    cb(code, stdout, stderr);
+  function onChildExit(code) {
+    if (code != 0) return stage.emit('error', new Error('find exited with error code ' + code));
+    var platoOutput = parsePlatoOutput(out);
+    cb(platoOutput);
   }
 }
 

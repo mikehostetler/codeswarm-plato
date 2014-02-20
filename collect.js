@@ -42,11 +42,6 @@ function parsePlatoOutput(out) {
       throw err;
     }
 
-    filename = filename.
-      substr(0, filename.indexOf('.json')).
-      substr(2).
-      replace('.history', '__history');
-
     doc[filename] = json;
   });
 

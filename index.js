@@ -13,6 +13,8 @@ exports.analyze = analyze;
 function analyze(build, stage) {
   var platoDir = '/tmp/plato-' + build.dir;
 
+  var platoResults;
+
   async.series([
     mkdirp,
     inject,
@@ -37,12 +39,13 @@ function analyze(build, stage) {
     collect(platoDir, stage, collected);
 
     function collected(platoOutput) {
+      platoResults = platoOutput;
       cb();
     }
   }
 
   function done(err) {
     if (err) stage.emit('error', err);
-    else stage.end();
+    else stage.end({plato: platoResults});
   }
 }

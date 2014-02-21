@@ -16,7 +16,7 @@ function inject(stage, dir, files, cb) {
       var dirname = path.dirname(fileName);
       if (dirname == '.') return cb();
       console.log('MKDIRPING', dirname);
-      stage.command('mkdir', ['-p', dirname], { cwd: dir }).
+      stage.command('mkdir', ['-p', dirname], { cwd: dir, silent: true }).
         once('close', closed);
 
       function closed(code) {
@@ -32,7 +32,7 @@ function inject(stage, dir, files, cb) {
       if ('string' != typeof content) content = JSON.stringify(content);
 
       var subCommand = shelly('echo ? > ?', content, fileName);
-      var command = stage.command('bash', ['-c', subCommand], {cwd: dir});
+      var command = stage.command('bash', ['-c', subCommand], { cwd: dir, silent: true });
       command.stderr.setEncoding('utf8');
       var stderr = '';
       command.stderr.on('data', function(d) {

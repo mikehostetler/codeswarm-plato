@@ -13,6 +13,7 @@
   },
   "homepage": "https://github.com/codeswarm/codeswarm-plato",
   "dependencies": {
-    "async": "~0.2.10"
+    "async": "~0.2.10",
+    "shelly": "0.0.3"
   }
 }

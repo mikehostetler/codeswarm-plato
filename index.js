@@ -1,3 +1,4 @@
+var inject = require('./inject');
 var collect = require('./collect');
 
 var PLATO_ARGS = [
@@ -10,14 +11,14 @@ var PLATO_ARGS = [
 
 exports.analyze = analyze;
 
-function analyze(build, stage) {
+function analyze(build, stage, previousBuild) {
   var platoDir = '/tmp/plato-' + build.dir;
 
   var platoResults;
 
   async.series([
     mkdirp,
-    inject,
+    _inject,
     run,
     _collect
     ], done);
@@ -26,8 +27,11 @@ function analyze(build, stage) {
     stage.command('mkdir', ['-p', platoDir]).once('close', cb);
   }
 
-  function inject(cb) {
-    process.nextTick(cb);
+  function _inject(cb) {
+    if (previousBuild && previousBuild.data && previousBuild.data.plato)
+      inject(stage, platoDir, previousBuild.data.plato, cb);
+    else
+      process.nextTick(cb);
   }
 
   function run(cb) {

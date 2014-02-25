@@ -11,7 +11,7 @@ var PLATO_ARGS = [
 
 exports.analyze = analyze;
 
-function analyze(build, stage, previousBuild) {
+function analyze(build, stage, context, previousBuild) {
   var platoDir = '/tmp/plato-' + build.dir;
 
   var platoResults;

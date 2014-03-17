@@ -11,7 +11,7 @@ var PLATO_ARGS = [
 
 exports.analyze = analyze;
 
-function analyze(build, stage, context, previousBuild) {
+function analyze(build, stage, config, context, previousBuild) {
   var platoDir = '/tmp/plato-' + build.dir;
 
   var platoResults;
@@ -24,7 +24,7 @@ function analyze(build, stage, context, previousBuild) {
     ], done);
 
   function mkdirp(cb) {
-    stage.command('mkdir', ['-p', platoDir]).once('close', cb);
+    stage.command('mkdir', ['-p', platoDir], { silent: true }).once('close', cb);
   }
 
   function _inject(cb) {
@@ -36,7 +36,7 @@ function analyze(build, stage, context, previousBuild) {
 
   function run(cb) {
     var args = PLATO_ARGS.concat(['-d', platoDir, '.']);
-    stage.command('plato', args).once('close', cb);
+    stage.command('plato', args, { silent: true }).once('close', cb);
   }
 
   function _collect(cb) {

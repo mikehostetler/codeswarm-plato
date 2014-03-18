@@ -15,12 +15,10 @@ function inject(stage, dir, files, cb) {
     function mkdirp(cb) {
       var dirname = path.dirname(fileName);
       if (dirname == '.') return cb();
-      console.log('MKDIRPING', dirname);
       stage.command('mkdir', ['-p', dirname], { cwd: dir, silent: true }).
         once('close', closed);
 
       function closed(code) {
-        console.log('MKDIRPED', code);
         if (code != 0)
           cb(new Error('mkdirp command closed with error ' + code));
         else cb();

@@ -12,6 +12,9 @@ var PLATO_ARGS = [
 exports.analyze = analyze;
 
 function analyze(build, stage, config, context, previousBuild) {
+
+  if (! config.active) return stage.end();
+
   var platoDir = '/tmp/plato-' + build.dir;
 
   var platoResults;
@@ -53,3 +56,8 @@ function analyze(build, stage, config, context, previousBuild) {
     else stage.end({plato: platoResults});
   }
 }
+
+
+/// config
+
+exports.config = require('./config');

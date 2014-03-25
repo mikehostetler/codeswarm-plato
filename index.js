@@ -1,3 +1,5 @@
+var shelly = require('shelly');
+
 var inject = require('./inject');
 var collect = require('./collect');
 
@@ -39,7 +41,12 @@ function analyze(build, stage, config, context, previousBuild) {
 
   function run(cb) {
     var args = PLATO_ARGS.concat(['-d', platoDir, '.']);
-    stage.command('plato', args, { silent: true }).once('close', cb);
+    var cmd = shelly('plato -q -r -x ? -d ? .', 'node_modules|\\.json', platoDir)
+    stage.command('bash', ['-c', cmd], { silent: true, env: {} }).once('close', done);
+
+    function done() {
+      cb();
+    }
   }
 
   function _collect(cb) {

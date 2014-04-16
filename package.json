@@ -2,7 +2,7 @@
   "name": "codeswarm-plato",
   "version": "0.0.1",
   "private": true,
-  "description": "Plato analysis on Strider",
+  "description": "Plato analysis on CodeSwarm",
   "main": "worker.js",
   "repository": {
     "type": "git",
@@ -15,5 +15,16 @@
   "dependencies": {
     "async": "~0.2.10",
     "shelly": "0.0.3"
-  }
+  },
+  "devDependencies": {
+		"mocha": "^1.18.2"
+	},
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha -u tdd"
+  },
+  "keywords": [
+    "codeswarm"
+  ],
+  "author": "CodeSwarm, Inc.",
+  "license": "Apache 2"
 }
